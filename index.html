@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FNV Hash Calculator</title>
+<meta name="keywords" content="fnv, online, calculator">
+<meta name="description" content="FNV Hash Calculator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+	font-size: 100%;
+}
+input {
+	width: 95%;
+	margin: 5px;
+}
+table {
+	margin: 5px;
+	border-collapse: collapse;
+}
+table, th, td {
+	border: 1px solid gainsboro;
+}
+td {
+	padding: 5px;
+}
+.fnv {
+	word-wrap: break-word;
+	word-break: break-all;
+}
+</style>
+</head>
+<body>
+
+<form action="#" onsubmit="cal(); return false">
+	<input type="text" id="in" placeholder="hex" oninput="cal()"/>
+</form>
+
+<table>
+	<thead>
+		<tr>
+			<th>Bits</th>
+			<th>FNV-1</th>
+			<th>FNV-1a</th>
+		<tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>32</td>
+			<td class="fnv" data-bits="32" data-alg="1"></td>
+			<td class="fnv" data-bits="32" data-alg="1a"></td>
+		</tr>
+		<tr>
+			<td>64</td>
+			<td class="fnv" data-bits="64" data-alg="1"></td>
+			<td class="fnv" data-bits="64" data-alg="1a"></td>
+		</tr>
+		<tr>
+			<td>128</td>
+			<td class="fnv" data-bits="128" data-alg="1"></td>
+			<td class="fnv" data-bits="128" data-alg="1a"></td>
+		</tr>
+		<tr>
+			<td>256</td>
+			<td class="fnv" data-bits="256" data-alg="1"></td>
+			<td class="fnv" data-bits="256" data-alg="1a"></td>
+		</tr>
+		<tr>
+			<td>512</td>
+			<td class="fnv" data-bits="512" data-alg="1"></td>
+			<td class="fnv" data-bits="512" data-alg="1a"></td>
+		</tr>
+		<tr>
+			<td>1024</td>
+			<td class="fnv" data-bits="1024" data-alg="1"></td>
+			<td class="fnv" data-bits="1024" data-alg="1a"></td>
+		</tr>
+	</tbody>
+</table>
+
+<script src="https://peterolson.github.io/BigInteger.js/BigInteger.min.js"></script>
+<script src="fnv.js"></script>
+<script>
+var hash = {
+	32: fnv(32),
+	64: fnv(64),
+	128: fnv(128),
+	256: fnv(256),
+	512: fnv(512),
+	1024: fnv(1024)
+};
+var timers = {};
+
+function update(element, data) {
+	element.innerHTML = '';
+	var b = element.getAttribute('data-bits');
+	var a = element.getAttribute('data-alg');
+	var n = 'fnv' + b + '_' + a;
+	clearTimeout(timers[n]);
+	var sum = (a == '1a') ? hash[b].sum1a : hash[b].sum1;
+	timers[n] = setTimeout(function() { element.innerHTML = sum(data); }, Math.random() * b/2);
+}
+
+function cal() {
+	var data = parseHexStr(document.getElementById('in').value);
+	var elements = document.getElementsByClassName('fnv');
+	for (var i = 0; i < elements.length; i++) {
+		update(elements[i], data);
+	}
+}
+</script>
+</body>
+</html>
